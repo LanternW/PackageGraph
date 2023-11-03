@@ -1,0 +1,31 @@
+#!/bin/bash
+
+packages=("pygame" "bidict" "networkx")
+
+for package in "${packages[@]}"
+do
+    is_installed=$(python -c "
+import pkg_resources
+try:
+    pkg_resources.get_distribution('${package}')
+    print('True')
+except pkg_resources.DistributionNotFound:
+    print('False')
+    ")
+
+    if [ "$is_installed" == "False" ]; then
+        echo "${package} is NOT installed"
+        echo "Installing ${package} ..."
+        pip install ${package}
+    else
+        echo "${package} is installed"
+    fi
+done
+
+script_path=$(readlink -f "$0")
+
+script_dir=$(dirname "$script_path")
+
+python_script="${script_dir}/scripts/main.py"
+
+python "$python_script"
